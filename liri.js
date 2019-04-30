@@ -11,8 +11,8 @@ var fs = require("fs");
 var spotify = new Spotify(keys.spotify);
 
 var spotifySearch = function (searchTerm) {
-  if (searchTerm === undefined) {
-    searchTerm = "The Sign";
+  if (searchTerm === "") {
+    searchTerm = "The Sign by Ace of Base";
   }
   spotify.search({ 
     type: 'track', 
@@ -70,37 +70,82 @@ var getBands = function(searchTerm) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
+      // console.log(error.response.status);
+      // console.log(error.response.headers);
     } else if (error.request) {
       // The request was made but no response was received
       // `error.request` is an object that comes back with details pertaining to the error that occurred.
-      console.log(error.request);
+      // console.log(error.request);
     } else {
       // Something happened in setting up the request that triggered an Error
-      console.log("Error", error.message);
+      // console.log("Error", error.message);
     }
-    console.log(error.config);
+    // console.log(error.config);
   });
 }
 
 // get movie data function
 var getMovie = function(searchTerm) {
-  
+  console.log(searchTerm);
+  if (searchTerm === "") {
+    searchTerm = "Mr Nobody";
+  }
+  var queryUrl = "http://www.omdbapi.com/?t=" + searchTerm + "&y=&plot=short&apikey=trilogy";
+
+  axios.get(queryUrl).then(
+    function(response) {
+      var movieData = response.data;
+      if (response) {
+      console.log("---------- Results for Movie: " + searchTerm + " -----------")
+      console.log("Title: " + movieData.Title);
+      console.log("Release Year: " + movieData.Year);
+      console.log("IMDB Rating: " + movieData.imdbRating);
+      console.log("Rotten Tomatoes Rating: " + movieData.Ratings[1].Value);
+      console.log("Country: " + movieData.Country);
+      console.log("Language: " + movieData.Language);
+      console.log("Plot: " + movieData.Plot);
+      console.log("Actors: " + movieData.Actors);
+      console.log("\n");
+    }
+  });
 }
+
+var doWhatItSays = function() {
+  fs.readFile("random.txt", "utf8", function(error, data) {
+    // console.log(data);
+    splitData = data.split(",");
+    // console.log(splitData);
+    commands = splitData[0];
+    noQuoteData = splitData[1].replace(/['"]+/g, '');
+    searchTerm = noQuoteData;
+    console.log(commands);
+    console.log(searchTerm);
+
+    liriBot(commands, searchTerm);
+  });
+};
 
 console.log(keys);
 var commands = process.argv[2];
 console.log(commands)
 var searchTerm = process.argv.slice(3).join(" ");
 console.log(searchTerm);
+liriBot(commands, searchTerm);
 
-if (commands === "concert-this") {
-  getBands(searchTerm);
-}
-if (commands === "spotify-this-song") {
-  spotifySearch(searchTerm);
-}
-if (commands === "movie-this") {
-
+function liriBot() {
+  if (commands === "concert-this") {
+    getBands(searchTerm);
+  }
+  if (commands === "spotify-this-song") {
+    spotifySearch(searchTerm);
+  }
+  if (commands === "movie-this") {
+    getMovie(searchTerm);
+  }
+  if (commands === "do-what-it-says") {
+    doWhatItSays();
+  } 
+  else {
+    console.log("Not a recognized command by LIRI");
+  }
 }
