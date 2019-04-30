@@ -40,21 +40,27 @@ var spotifySearch = function (searchTerm) {
 
 // getBands axios function
 var getBands = function(searchTerm) {
-  console.log("pass")
   axios
   .get("https://rest.bandsintown.com/artists/" + searchTerm + "/events?app_id=codingbootcamp")
   .then(function(response) {
     // If the axios was successful...
     // Then log the body from the site!
     var axiosData = response.data;
-    var location = axiosData[i].city + ", " + axiosData[i].region + ", " + axiosData[i].country;
+    // var location = axiosData[i].venue.city + ", " + axiosData[i].venue.region + ", " + axiosData[i].venue.country;
     for (var i = 0; i < axiosData.length; i++) {
-    console.log(axiosData[i]);
-      if (axiosData[i].city === undefined) {
-        console.log(axiosData[i].country);
+    console.log("---------- Event Results for Artist: " + searchTerm + " -----------")
+    console.log("Venue Name: " + axiosData[i].venue.name);
+    
+      if (axiosData[i].venue.city === undefined) {
+        console.log("Venue Location: " + axiosData[i].venue.country || axiosData[i].venue.region);
+        console.log("Show Date: " + moment(axiosData[i].datetime).format("MM/DD/YYYY"));
+
       } else {
-        console.log(location)
+        console.log("Venue Location: " + axiosData[i].venue.city + ", " + axiosData[i].venue.region + ", " + axiosData[i].venue.country);
+        console.log("Show Date: " + moment(axiosData[i].datetime).format("MM/DD/YYYY"));
+
       }
+      console.log("\n");
     }
   })
   .catch(function(error) {
