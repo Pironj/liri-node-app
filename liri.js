@@ -25,12 +25,14 @@ var spotifySearch = function (searchTerm) {
     // console.log(JSON.stringify(data, null, 2));
 
   var spotifySong = data.tracks.items;
-  // console.log(JSON.stringify(spotifySong));
+  console.log(JSON.stringify(spotifySong[0].artists, null, 2));
   for (var i = 0; i < spotifySong.length; i++) {
-    console.log("Artist(s): " + spotifySong[i].artists);
+    console.log("---------- Track Results for: " + searchTerm + " -----------")
+    console.log("Artist(s): " + spotifySong[i].artists[0].name);
     console.log("Track Name: " + spotifySong[i].name);
     console.log("Preview URL: " + spotifySong[i].preview_url);
     console.log("Album: " + spotifySong[i].album.name);
+    console.log("\n");
   }
   });
   // .catch(function(err) {
@@ -82,7 +84,10 @@ var getBands = function(searchTerm) {
   });
 }
 
-
+// get movie data function
+var getMovie = function(searchTerm) {
+  
+}
 
 console.log(keys);
 var commands = process.argv[2];
@@ -95,4 +100,7 @@ if (commands === "concert-this") {
 }
 if (commands === "spotify-this-song") {
   spotifySearch(searchTerm);
+}
+if (commands === "movie-this") {
+
 }
