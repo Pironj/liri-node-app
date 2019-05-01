@@ -18,7 +18,7 @@ Open your terminal and type the following in the command `node liri.js`:
     node liri.js do-what-this-says
     ```
 # Video Demo
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+(http://www.youtube.com/watch?v=5aFf5YeYLtY)
 
 ## Install app instruction:
 
