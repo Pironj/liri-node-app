@@ -9,11 +9,25 @@ var fs = require("fs");
 
 
 var spotify = new Spotify(keys.spotify);
+// JSON.stringify(data) ????
+var loggingFun = function(data) {
+  fs.appendFile("log.txt", data, function(err) {
+    if (err) {
+      console.log(err);
+    }
+  })
+  console.log("Updated log.txt File");
+}
 
 var spotifySearch = function (searchTerm) {
   if (searchTerm === "") {
     searchTerm = "The Sign by Ace of Base";
   }
+  // Passing command + search to write helper function above.
+  var logCom = "\n\n\n\nLIRI BOT Command: " + commands + "\nSearched: " + searchTerm + "\n\n"
+  loggingFun(logCom);
+  
+  // API call spotify
   spotify.search({ 
     type: 'track', 
     query: searchTerm 
@@ -22,22 +36,21 @@ var spotifySearch = function (searchTerm) {
     if (err) {
       return console.log("Error occured: " + err);
     }
-    // console.log(JSON.stringify(data, null, 2));
 
   var spotifySong = data.tracks.items;
-  console.log(JSON.stringify(spotifySong[0].artists, null, 2));
+  // console.log(JSON.stringify(spotifySong[0].artists, null, 2));
   for (var i = 0; i < spotifySong.length; i++) {
+    var data = "---------- Track Results for: " + searchTerm + " -----------\n" + "Artist(s): " + spotifySong[i].artists[0].name + "\nTrack Name: " + spotifySong[i].name + "\nPreview URL: " + spotifySong[i].preview_url + "\nAlbum: " + spotifySong[i].album.name + "\n\n";
+
     console.log("---------- Track Results for: " + searchTerm + " -----------")
     console.log("Artist(s): " + spotifySong[i].artists[0].name);
     console.log("Track Name: " + spotifySong[i].name);
     console.log("Preview URL: " + spotifySong[i].preview_url);
     console.log("Album: " + spotifySong[i].album.name);
     console.log("\n");
+    loggingFun(data);
   }
   });
-  // .catch(function(err) {
-  //   console.log("Error: " + err);
-  // });
 }
 
 // getBands axios function
@@ -45,6 +58,11 @@ var getBands = function(searchTerm) {
   if (searchTerm === "") {
     searchTerm = "Baby Shark";
   }
+  // Passing command + search to write helper function above.
+  var logCom = "\n\n\n\nLIRI BOT Command: " + commands + "\nSearched: " + searchTerm + "\n\n"
+  loggingFun(logCom);
+
+  // API call bandsintown
   axios
   .get("https://rest.bandsintown.com/artists/" + searchTerm + "/events?app_id=codingbootcamp")
   .then(function(response) {
@@ -53,6 +71,7 @@ var getBands = function(searchTerm) {
     var axiosData = response.data;
     // var location = axiosData[i].venue.city + ", " + axiosData[i].venue.region + ", " + axiosData[i].venue.country;
     for (var i = 0; i < axiosData.length; i++) {
+      var data = "---------- Event Results for Artist/Band: " + searchTerm + " -----------\n" + "Venue Name: " + axiosData[i].venue.name + "\nVenue Location: " + axiosData[i].venue.city + ", " + axiosData[i].venue.region + ", " + axiosData[i].venue.country + "\nShow Date: " + moment(axiosData[i].datetime).format("MM/DD/YYYY") + "\n\n";
     console.log("---------- Event Results for Artist/Band: " + searchTerm + " -----------")
     console.log("Venue Name: " + axiosData[i].venue.name);
     
@@ -66,6 +85,7 @@ var getBands = function(searchTerm) {
 
       }
       console.log("\n");
+      loggingFun(data);
     }
   })
   .catch(function(error) {
@@ -73,17 +93,7 @@ var getBands = function(searchTerm) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       console.log(error.response.data);
-      // console.log(error.response.status);
-      // console.log(error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an object that comes back with details pertaining to the error that occurred.
-      // console.log(error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      // console.log("Error", error.message);
     }
-    // console.log(error.config);
   });
 }
 
@@ -93,12 +103,17 @@ var getMovie = function(searchTerm) {
   if (searchTerm === "") {
     searchTerm = "Mr Nobody";
   }
+  // Passing command + search to write helper function above.
+  var logCom = "\n\n\n\nLIRI BOT Command: " + commands + "\nSearched: " + searchTerm + "\n\n"
+  loggingFun(logCom);
+
   var queryUrl = "http://www.omdbapi.com/?t=" + searchTerm + "&y=&plot=short&apikey=trilogy";
 
   axios.get(queryUrl).then(
     function(response) {
       var movieData = response.data;
       if (response) {
+      var data = "---------- Results for Movie: " + searchTerm + " -----------\n" + "Title: " + movieData.Title + "\nIMDB Rating: " + movieData.imdbRating + "\nRotten Tomatoes Rating: " + movieData.Ratings[1].Value + "\nCountry: " + movieData.Country + "\nLanguage: " + movieData.Language + "\nPlot: " + movieData.Plot + "\nActors: " + movieData.Actors + "\n\n";
       console.log("---------- Results for Movie: " + searchTerm + " -----------")
       console.log("Title: " + movieData.Title);
       console.log("Release Year: " + movieData.Year);
@@ -109,48 +124,44 @@ var getMovie = function(searchTerm) {
       console.log("Plot: " + movieData.Plot);
       console.log("Actors: " + movieData.Actors);
       console.log("\n");
+      loggingFun(data);
     }
   });
 }
 
+// function that reads random.txt file and passes text via commands to liriBot function.
 var doWhatItSays = function() {
   fs.readFile("random.txt", "utf8", function(error, data) {
-    // console.log(data);
     splitData = data.split(",");
-    // console.log(splitData);
-    commands = splitData[0];
+    var commands = splitData[0];
     noQuoteData = splitData[1].replace(/['"]+/g, '');
-    searchTerm = noQuoteData;
-    console.log(commands);
-    console.log(searchTerm);
+    var searchTerm = noQuoteData;
 
     liriBot(commands, searchTerm);
   });
 };
 
-console.log(keys);
 var commands = process.argv[2];
-console.log(commands)
 var searchTerm = process.argv.slice(3).join(" ");
-console.log(searchTerm);
 liriBot(commands, searchTerm);
 
-function liriBot() {
-  if (commands === "concert-this") {
-    getBands(searchTerm);
-  }
-  if (commands === "spotify-this-song") {
-    spotifySearch(searchTerm);
-  }
-  if (commands === "movie-this") {
-    getMovie(searchTerm);
-  }
-  if (commands === "do-what-it-says") {
-    doWhatItSays();
-  } 
-  else {
-    if (commands !== "concert-this" || commands !== "spotify-this-song" || commands !== "movie-this" || commands !== "do-what-it-says" || commands === undefined) {
+// switch function taking in user arguments and sorts to associated function calls
+function liriBot(commands, searchTerm) {
+  switch (commands) {
+    case "concert-this":
+      getBands(searchTerm);
+      break;
+    case "spotify-this-song":
+      spotifySearch(searchTerm);
+      break;
+    case "movie-this":
+      getMovie(searchTerm);
+      break;
+    case "do-what-it-says":
+      doWhatItSays();
+      break;
+    default:
       console.log("Not a recognized command by LIRI");
-    }
+      break;
   }
 }
