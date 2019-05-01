@@ -42,6 +42,9 @@ var spotifySearch = function (searchTerm) {
 
 // getBands axios function
 var getBands = function(searchTerm) {
+  if (searchTerm === "") {
+    searchTerm = "Baby Shark";
+  }
   axios
   .get("https://rest.bandsintown.com/artists/" + searchTerm + "/events?app_id=codingbootcamp")
   .then(function(response) {
@@ -50,7 +53,7 @@ var getBands = function(searchTerm) {
     var axiosData = response.data;
     // var location = axiosData[i].venue.city + ", " + axiosData[i].venue.region + ", " + axiosData[i].venue.country;
     for (var i = 0; i < axiosData.length; i++) {
-    console.log("---------- Event Results for Artist: " + searchTerm + " -----------")
+    console.log("---------- Event Results for Artist/Band: " + searchTerm + " -----------")
     console.log("Venue Name: " + axiosData[i].venue.name);
     
       if (axiosData[i].venue.city === undefined) {
@@ -146,6 +149,8 @@ function liriBot() {
     doWhatItSays();
   } 
   else {
-    console.log("Not a recognized command by LIRI");
+    if (commands !== "concert-this" || commands !== "spotify-this-song" || commands !== "movie-this" || commands !== "do-what-it-says" || commands === undefined) {
+      console.log("Not a recognized command by LIRI");
+    }
   }
 }
