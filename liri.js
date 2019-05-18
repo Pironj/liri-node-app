@@ -112,7 +112,7 @@ var getMovie = function(searchTerm) {
   axios.get(queryUrl).then(
     function(response) {
       var movieData = response.data;
-      if (response) {
+      if (!movieData.response) {
       var data = "---------- Results for Movie: " + searchTerm + " -----------\n" + "Title: " + movieData.Title + "\nIMDB Rating: " + movieData.imdbRating + "\nRotten Tomatoes Rating: " + movieData.Ratings[1].Value + "\nCountry: " + movieData.Country + "\nLanguage: " + movieData.Language + "\nPlot: " + movieData.Plot + "\nActors: " + movieData.Actors + "\n\n";
       console.log("---------- Results for Movie: " + searchTerm + " -----------")
       console.log("Title: " + movieData.Title);

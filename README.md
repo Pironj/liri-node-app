@@ -14,7 +14,7 @@ Open your terminal and type the following in the command `node liri.js`:
     ```
     node liri.js concert-this metallica
     node liri.js spotify-this-song enter sandman
-    node liri.js movie-this fear and loathing las vegas
+    node liri.js movie-this fear and loathing in las vegas
     node liri.js do-what-this-says
     ```
 # Video Demo
